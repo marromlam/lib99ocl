@@ -8,6 +8,8 @@
 WITHIN_KERNEL
 ftype rgamma(ftype x);
 
+WITHIN_KERNEL
+ftype gammasgn(ftype x);
 
 WITHIN_KERNEL
 ftype rgammaln(const ftype x);
