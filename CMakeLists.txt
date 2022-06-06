@@ -3,6 +3,7 @@ project(lib99ocl)
 
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/")
 find_package(OpenCL REQUIRED)
@@ -11,7 +12,7 @@ include_directories( ${OPENCL_INCLUDE_DIR} )
 # set(CMAKE_C_STANDARD 99)
 # set(CMAKE_C_STANDARD_REQUIRED TRUE)
 
-include_directories($CONDA_PREFIX/include, "/home3/marcos.romero/py-lib99ocl/lib99ocl/src")
+include_directories($CONDA_PREFIX/include)
 set(CMAKE_CXX_FLAGS_INIT "-Werror -Wall -Wextra -Wpedantic")
 
 add_link_options(-lOpenCL)
