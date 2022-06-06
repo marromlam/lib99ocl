@@ -67,6 +67,36 @@ int nearest_int(ftype x)
    }
    return i;
 }
+
+// WITHIN_KERNEL
+// ftype round(const ftype x)
+// {
+//     ftype y, r;
+//
+//     /* Largest integer <= x */
+//     y = floor(x);
+//
+//     /* Fractional part */
+//     r = x - y;
+//
+//     /* Round up to nearest. */
+//     if (r > 0.5)
+// 	goto rndup;
+//
+//     /* Round to even */
+//     if (r == 0.5) {
+// 	r = y - 2.0 * floor(0.5 * y);
+// 	if (r == 1.0) {
+// 	  rndup:
+// 	    y += 1.0;
+// 	}
+//     }
+//
+//     /* Else round down. */
+//     return (y);
+// }
+
+
 //static float sqrarg;
 //#define SQR(a) ((sqrarg=(a)) == 0.0 ? 0.0 : sqrarg*sqrarg)
 //#define SQUARE(a) ((a)*(a))
