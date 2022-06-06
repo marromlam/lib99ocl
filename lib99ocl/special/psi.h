@@ -3,11 +3,11 @@
 
 
 #include "../core.h"
-// #include "../poly/eval.h"
+#include "../poly/eval.h"
 
 
 WITHIN_KERNEL
-ftype psi(const ftype x);
+ftype digamma(const ftype x);
 
 #endif // _PSI_H_
 
