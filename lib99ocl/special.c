@@ -10,7 +10,7 @@
 #include "special/spherical_harmonics.c"
 #include "special/psi.c"
 // #include "gsl/specfunc/psi.c"
-// #include "special/hyp2f1.c"
+#include "special/hyp2f1.c"
 #include "special/bessel.c"
 
 #endif //_SPECIAL_C_
