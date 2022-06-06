@@ -1,6 +1,20 @@
 #ifndef _CONSTANTS_H_
 #define _CONSTANTS_H_
 
+// Machine {{{
+//
+// intgration
+#define EPS 1.0e-5
+#define JMAX 20
+
+// randon number generation
+#define RNG_CYCLES 100
+
+
+#define Inf (1./0.)
+#define NaN (0./0.)
+
+// }}}
 
 // Define machine constants
 #define SQRT_2PI_INV 0.3989422804
@@ -10,6 +24,8 @@
 #define MAXLOG 8.8029691931113054295988E1     // log(2**127)
 #define MACHEP 1.38777878078144567553E-17     // 2**-56
 #define DBLEPS 2.2204460492503131e-16
+
+#define SMALLEPS 1e-13
 // MACHEP = 1.11022302462515654042E-16; // IEEE 2**-53
 // MAXLOG = 7.09782712893383996843E2; // IEEE log(2**1024) denormalized
 #define BIG 4.503599627370496e15
