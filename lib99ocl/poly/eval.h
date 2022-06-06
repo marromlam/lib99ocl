@@ -4,10 +4,14 @@
 #include "../core.h"
 
 WITHIN_KERNEL
-ftype polyeval(ftype x, ftype *coef, const int N);
+ftype polyeval(const ftype x, const ftype *coef, const int N);
 
 WITHIN_KERNEL
-ftype pol1eval(ftype x, ftype *coef, const int N);
+ftype pol1eval(const ftype x, const ftype *coef, const int N);
+
+WITHIN_KERNEL
+ftype polyratioeval(const ftype x, const ftype num[], const int M,
+										const ftype denom[], const int N);
 
 #endif // _EVAL_H_
 
