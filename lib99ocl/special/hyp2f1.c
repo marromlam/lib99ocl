@@ -45,20 +45,20 @@ ftype hyp2f1(ftype a, ftype b, ftype c, ftype x) {
   }
 
   if (d <= -1 && !(fabs(d - id) > EPS && s < 0) && !(neg_int_a || neg_int_b)) {
-    return pow(s, d) * hyp2f1(c - a, c - b, c, x);
+    return rpow(s, d) * hyp2f1(c - a, c - b, c, x);
   }
   if (d <= 0 && x == 1 && !(neg_int_a || neg_int_b))
-    goto hypdiv;
+    return MAXNUM;
 
   if (ax < 1.0 || x == -1.0) {
     /* 2F1(a,b;b;x) = (1-x)**(-a) */
     if (fabs(b - c) < EPS) { /* b = c */
-      y = pow(s, -a);        /* s to the -a power */
-      goto hypdon;
+      y = rpow(s, -a);       /* s to the -a power */
+      return y;
     }
     if (fabs(a - c) < EPS) { /* a = c */
-      y = pow(s, -b);        /* s to the -b power */
-      goto hypdon;
+      y = rpow(s, -b);       /* s to the -b power */
+      return y;
     }
   }
 
@@ -67,15 +67,15 @@ ftype hyp2f1(ftype a, ftype b, ftype c, ftype x) {
     if (fabs(c - ic) < EPS) { /* c is a negative integer */
       /* check if termination before explosion */
       if (neg_int_a && (ia > ic))
-        goto hypok;
+        return hyt2f1(a, b, c, x, &err);
       if (neg_int_b && (ib > ic))
-        goto hypok;
-      goto hypdiv;
+        return hyt2f1(a, b, c, x, &err);
+      return MAXNUM;
     }
   }
 
   if (neg_int_a || neg_int_b) /* function is a polynomial */
-    goto hypok;
+    return hyt2f1(a, b, c, x, &err);
 
   t1 = fabs(b - a);
   if (x < -2.0 && fabs(t1 - round(t1)) > EPS) {
@@ -99,7 +99,7 @@ ftype hyp2f1(ftype a, ftype b, ftype c, ftype x) {
   }
 
   if (ax > 1.0) /* series diverges  */
-    goto hypdiv;
+    return MAXNUM;
 
   p = c - a;
   ia = round(p);                           /* nearest integer to c-a */
@@ -120,17 +120,17 @@ ftype hyp2f1(ftype a, ftype b, ftype c, ftype x) {
     if (x > 0.0) {
       if (neg_int_ca_or_cb) {
         if (d >= 0.0)
-          goto hypf;
+          return pow(s, d) * hys2f1(c - a, c - b, c, x, &err);
         else
-          goto hypdiv;
+          return MAXNUM;
       }
       if (d <= 0.0)
-        goto hypdiv;
+        return MAXNUM;
       y = rgamma(c) * rgamma(d) / (rgamma(p) * rgamma(r));
-      goto hypdon;
+      return y;
     }
     if (d <= -1.0)
-      goto hypdiv;
+      return MAXNUM;
   }
 
   /* Conditionally make d > 0 by recurrence on c
@@ -140,7 +140,7 @@ ftype hyp2f1(ftype a, ftype b, ftype c, ftype x) {
     /* Try the power series first */
     y = hyt2f1(a, b, c, x, &err);
     if (err < ETHRESH)
-      goto hypdon;
+      return y;
     /* Apply the recurrence if power series fails */
     err = 0.0;
     aid = 2 - id;
@@ -156,35 +156,15 @@ ftype hyp2f1(ftype a, ftype b, ftype c, ftype x) {
       d1 = d2;
       d2 = y;
     }
-    goto hypdon;
+    return y;
   }
 
   if (neg_int_ca_or_cb) {
     /* negative integer c-a or c-b */
-    goto hypf;
+    return pow(s, d) * hys2f1(c - a, c - b, c, x, &err);
   }
 
-hypok:
-  y = hyt2f1(a, b, c, x, &err);
-
-hypdon:
-  if (err > ETHRESH) {
-    // mtherr("hyp2f1", CEPHES_PLOSS);
-    /*      printf( "Estimated err = %.2e\n", err ); */
-  }
-  return y;
-
-  /* The transformation for c-a or c-b negative integer
-   * AMS55 #15.3.3
-   */
-hypf:
-  y = pow(s, d) * hys2f1(c - a, c - b, c, x, &err);
-  goto hypdon;
-
-  /* The alarm exit */
-hypdiv:
-  // mtherr("hyp2f1", CEPHES_OVERFLOW);
-  return MAXNUM;
+  return hyt2f1(a, b, c, x, &err);
 }
 //}}}
 
@@ -218,7 +198,9 @@ ftype hyt2f1(ftype a, ftype b, ftype c, ftype x, ftype *loss) {
     } else {
       y = pow(s, -b) * hys2f1(c - a, b, c, -x / s, &err);
     }
-    goto done;
+    // goto done;
+    *loss = err;
+    return (y);
   }
 
   d = c - a - b;
@@ -229,8 +211,10 @@ ftype hyt2f1(ftype a, ftype b, ftype c, ftype x, ftype *loss) {
       /* test for integer c-a-b */
       /* Try the power series first */
       y = hys2f1(a, b, c, x, &err);
-      if (err < ETHRESH)
-        goto done;
+      if (err < ETHRESH) {
+        *loss = err;
+        return (y);
+      }
       /* If power series fails, then apply AMS55 #15.3.6 */
       q = hys2f1(a, b, 1.0 - d, s, &err);
       q *= rgamma(d) / (rgamma(c - a) * rgamma(c - b));
@@ -245,7 +229,9 @@ ftype hyt2f1(ftype a, ftype b, ftype c, ftype x, ftype *loss) {
       err += err1 + (MACHEP * r) / y;
 
       y *= rgamma(c);
-      goto done;
+      *loss = err;
+      return (y);
+
     } else {
       /* Psi function expansion, AMS55 #15.3.10, #15.3.11, #15.3.12
        *
@@ -268,14 +254,15 @@ ftype hyt2f1(ftype a, ftype b, ftype c, ftype x, ftype *loss) {
       ax = log(s);
 
       /* sum for t = 0 */
-      y = psi(1.0) + psi(1.0 + e) - psi(a + d1) - psi(b + d1) - ax;
+      y = digamma(1.0) + digamma(1.0 + e) - digamma(a + d1) - digamma(b + d1) -
+          ax;
       y /= rgamma(e + 1.0);
 
       p = (a + d1) * (b + d1) * s / rgamma(e + 2.0); /* Poch for t=1 */
       t = 1.0;
       do {
-        r = psi(1.0 + t) + psi(1.0 + t + e) - psi(a + t + d1) -
-            psi(b + t + d1) - ax;
+        r = digamma(1.0 + t) + digamma(1.0 + t + e) - digamma(a + t + d1) -
+            digamma(b + t + d1) - ax;
         q = p * r;
         y += q;
         p *= s * (a + t + d1) / (t + 1.0);
@@ -290,24 +277,15 @@ ftype hyt2f1(ftype a, ftype b, ftype c, ftype x, ftype *loss) {
 
       if (id == 0.0) {
         y *= rgamma(c) / (rgamma(a) * rgamma(b));
-        goto psidon;
+        // goto psidon;
+        *loss = err;
+        return (y);
       }
 
       y1 = 1.0;
 
       if (aid == 1)
-        goto nosum;
-
-      t = 0.0;
-      p = 1.0;
-      for (i = 1; i < aid; i++) {
-        r = 1.0 - e + t;
-        p *= s * (a + t + d2) * (b + t + d2) / r;
-        t += 1.0;
-        p /= t;
-        y1 += p;
-      }
-    nosum:
+      {
       p = rgamma(c);
       y1 *= rgamma(e) * p / (rgamma(a + d1) * rgamma(b + d1));
 
@@ -322,17 +300,48 @@ ftype hyt2f1(ftype a, ftype b, ftype c, ftype x, ftype *loss) {
         y1 *= q;
 
       y += y1;
-    psidon:
-      goto done;
+        *loss = err;
+        return (y);
+
+      }
+
+      t = 0.0;
+      p = 1.0;
+      for (i = 1; i < aid; i++) {
+        r = 1.0 - e + t;
+        p *= s * (a + t + d2) * (b + t + d2) / r;
+        t += 1.0;
+        p /= t;
+        y1 += p;
+      }
+    // nosum:
+    //   p = rgamma(c);
+    //   y1 *= rgamma(e) * p / (rgamma(a + d1) * rgamma(b + d1));
+    //
+    //   y *= p / (rgamma(a + d2) * rgamma(b + d2));
+    //   if ((aid & 1) != 0)
+    //     y = -y;
+    //
+    //   q = pow(s, id); /* s to the id power */
+    //   if (id > 0.0)
+    //     y *= q;
+    //   else
+    //     y1 *= q;
+    //
+    //   y += y1;
+    // psidon:
+    //   goto done;
     }
   }
 
   /* Use defining power series if no special cases */
   y = hys2f1(a, b, c, x, &err);
-
-done:
   *loss = err;
   return (y);
+
+// done:
+//   *loss = err;
+//   return (y);
 }
 // }}}
 
@@ -429,7 +438,7 @@ ftype hyp2f1ra(ftype a, ftype b, ftype c, ftype x, ftype *loss) {
   *loss = 0;
 
   if (da == 0) {
-    return NAN;
+    return NaN;
   }
 
   if (da < 0) {
