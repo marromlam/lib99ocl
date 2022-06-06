@@ -5,48 +5,48 @@
 #include "lib99ocl/machine.h"
 // #include "../poly/eval.c"
 
-// WITHIN_KERNEL
-// ftype psi(ftype x) {
-//
-//   const ftype GAMMA = 0.577215664901532860606512090082;
-//   const ftype GAMMA_MINX = 1.e-12;
-//   const ftype DIGAMMA_MINNEGX = -1250;
-//   const ftype C_LIMIT = 49;
-//   const ftype S_LIMIT = 1e-5;
-//
-//   if (x == floor(x)) {
-//     // mtherr_with_arg("psi", CEPHES_SING, x);
-// 		if ( x < 0)
-// 			return NaN;
-// 		else if (floor(x) == 0)
-// 			return -MAXNUM;
-// 		// else
-//
-//   }
-//   ftype value = 0;
-//
-//   while (1) {
-//
-//     if (x >= 0 && x < GAMMA_MINX) {
-//       x = GAMMA_MINX;
-//     }
-//     if (x < DIGAMMA_MINNEGX) {
-//       x = DIGAMMA_MINNEGX + GAMMA_MINX;
-//       continue;
-//     }
-//     if (x > 0 && x <= S_LIMIT) {
-//       return value + -GAMMA - 1 / x;
-//     }
-//
-//     if (x >= C_LIMIT) {
-//       ftype inv = 1 / (x * x);
-//       return value + log(x) - 0.5 / x - inv * ((1.0 / 12) + inv * (1.0 / 120 - inv / 252));
-//     }
-//
-//     value -= 1 / x;
-//     x = x + 1;
-//   }
-// }
+WITHIN_KERNEL
+ftype psi(ftype x) {
+
+  const ftype GAMMA = 0.577215664901532860606512090082;
+  const ftype GAMMA_MINX = 1.e-12;
+  const ftype DIGAMMA_MINNEGX = -1250;
+  const ftype C_LIMIT = 49;
+  const ftype S_LIMIT = 1e-5;
+
+  if (x == floor(x)) {
+    // mtherr_with_arg("psi", CEPHES_SING, x);
+		if ( x < 0)
+			return NaN;
+		else if (floor(x) == 0)
+			return -MAXNUM;
+		// else
+
+  }
+  ftype value = 0;
+
+  while (1) {
+
+    if (x >= 0 && x < GAMMA_MINX) {
+      x = GAMMA_MINX;
+    }
+    if (x < DIGAMMA_MINNEGX) {
+      x = DIGAMMA_MINNEGX + GAMMA_MINX;
+      continue;
+    }
+    if (x > 0 && x <= S_LIMIT) {
+      return value + -GAMMA - 1 / x;
+    }
+
+    if (x >= C_LIMIT) {
+      ftype inv = 1 / (x * x);
+      return value + log(x) - 0.5 / x - inv * ((1.0 / 12) + inv * (1.0 / 120 - inv / 252));
+    }
+
+    value -= 1 / x;
+    x = x + 1;
+  }
+}
 
 
 

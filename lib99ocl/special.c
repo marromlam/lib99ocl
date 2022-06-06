@@ -8,8 +8,8 @@
 #include "special/gamma.c"
 #include "special/legendre.c"
 #include "special/spherical_harmonics.c"
-// #include "special/psi.c"
-#include "gsl/specfunc/psi.c"
+#include "special/psi.c"
+// #include "gsl/specfunc/psi.c"
 // #include "special/hyp2f1.c"
 #include "special/bessel.c"
 
