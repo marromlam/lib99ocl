@@ -51,11 +51,13 @@ void py_amoroso(GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *in, const ftype a
 
 
 KERNEL
-void py_gaussian(GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *in,
-            const ftype mu, const ftype sigma )
+void kernel_gaussian(GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *in,
+            const ftype mu, const ftype sigma, const ftype xL, const ftype xU)
 {
   SIZE_T idx = get_global_id(0);
-  out[idx] = gaussian(in[idx], mu, sigma );
+  const ftype gpdf = gaussian(in[idx], mu, sigma);
+  const ftype gint = gaussian_integral(xL, xU, mu, sigma);
+  out[idx] = gpdf/gint;
 }
 
 
@@ -96,6 +98,17 @@ void py_crystal_ball(GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *in,
   out[idx] = crystal_ball(in[idx], c, s, a, n);
 }
 
+
+KERNEL void kernel_crystal_ball(
+    GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *x, const ftype mu,
+    GLOBAL_MEM const ftype *sigma, const ftype aL, const ftype nL,
+    const ftype xL, const ftype xU)
+{
+  const unsigned int idx = get_global_id(0);
+  const ftype num = crystal_ball(x[idx], mu, sigma[idx], aL, nL);
+  const ftype den = crystal_ball_integral(xL, xU, mu, sigma[idx], aL, nL);
+  out[idx] = num / den;
+}
 
 
 KERNEL void kernel_double_crystal_ball(
@@ -195,3 +208,5 @@ void py_johnson_su(GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *in,
   SIZE_T idx = get_global_id(0);
   out[idx] = johnson_su(in[idx], mu, sigma, gamma, delta);
 }
+
+// vim: ft=cpp

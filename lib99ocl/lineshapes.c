@@ -136,6 +136,72 @@ ftype crystal_ball(const ftype x, const ftype c, const ftype s, const ftype a,
   }
 }
 
+
+WITHIN_KERNEL
+ftype crystal_ball_integral(const ftype xL, const ftype xU, const ftype m0,
+                            const ftype sigma, const ftype alpha, const ftype n)
+{
+  const double sqrtPiOver2 = 1.2533141373;
+  const double sqrt2 = 1.4142135624;
+  
+  double result = 0.0;
+  bool useLog = false;
+  
+  if( fabs(n-1.0) < 1.0e-05 )
+    useLog = true;
+  
+  double sig = fabs((double)sigma);
+  
+  double tmin = (xL-m0)/sig;
+  double tmax = (xU-m0)/sig;
+  
+  if(alpha < 0) {
+    double tmp = tmin;
+    tmin = -tmax;
+    tmax = -tmp;
+  }
+  
+  double absAlpha = fabs((double)alpha);
+  
+  if( tmin >= -absAlpha ) {
+    result += sig*sqrtPiOver2*(   erf(tmax/sqrt2)
+                                - erf(tmin/sqrt2) );
+  }
+  else if( tmax <= -absAlpha ) {
+    double a = rpow(n/absAlpha,n)*exp(-0.5*absAlpha*absAlpha);
+    double b = n/absAlpha - absAlpha;
+  
+    if(useLog) {
+      result += a*sig*( log(b-tmin) - log(b-tmax) );
+    }
+    else {
+      result += a*sig/(1.0-n)*(   1.0/(rpow(b-tmin,n-1.0))
+                                - 1.0/(rpow(b-tmax,n-1.0)) );
+    }
+  }
+  else {
+    double a = rpow(n/absAlpha,n)*exp(-0.5*absAlpha*absAlpha);
+    double b = n/absAlpha - absAlpha;
+  
+    double term1 = 0.0;
+    if(useLog) {
+      term1 = a*sig*(  log(b-tmin) - log(n/absAlpha));
+    }
+    else {
+      term1 = a*sig/(1.0-n)*(   1.0/(rpow(b-tmin,n-1.0))
+                              - 1.0/(rpow(n/absAlpha,n-1.0)) );
+    }
+  
+    double term2 = sig*sqrtPiOver2*(   erf(tmax/sqrt2)
+                                     - erf(-absAlpha/sqrt2) );
+  
+  
+    result += term1 + term2;
+  }
+  
+  return result != 0. ? result : 1.E-300;
+}
+
 // }}}
 
 

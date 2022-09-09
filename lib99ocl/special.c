@@ -10,7 +10,9 @@
 #include "special/spherical_harmonics.c"
 #include "special/psi.c"
 // #include "gsl/specfunc/psi.c"
+#ifdef CUDA
 #include "special/hyp2f1.c"
+#endif /* CUDA */
 #include "special/bessel.c"
 
 #endif //_SPECIAL_C_

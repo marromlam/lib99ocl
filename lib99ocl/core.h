@@ -18,11 +18,14 @@ typedef struct float2_struct complex_float;
 #endif
 
 #if USE_DOUBLE
+// #define ftype double
+// #define ctype complex_double
 #define ftype double
-#define ctype complex_double
+#define ctype double2
 #else
 #define ftype float
-#define ctype complex_float
+#define ctype float2
+// #define ctype complex_float
 #endif
 
 #ifndef CUDA

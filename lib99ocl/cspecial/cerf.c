@@ -285,8 +285,8 @@ ctype cwofz(ctype z) {
 #ifdef CUDA
     nc = 7 + int(23.0 * q);
 #else
-    // nc = 7 + convert_int(23.0 * q);
-    nc = 7 + nearest_int(23.0 * q);
+    nc = 7 + convert_int(23.0 * q);
+    // nc = 7 + nearest_int(23.0 * q);
 #endif
 
     //       xl = pow(h, ftype(1 - nc));
@@ -300,8 +300,8 @@ ctype cwofz(ctype z) {
 #ifdef CUDA
     nu = 10 + int(21.0 * q);
 #else
-    // nu = 10 + convert_int(21.0 * q);
-    nu = 10 + nearest_int(21.0 * q);
+    nu = 10 + convert_int(21.0 * q);
+    // nu = 10 + nearest_int(21.0 * q);
 #endif
     Rx[nu] = 0.;
     Ry[nu] = 0.;

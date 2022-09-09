@@ -10,17 +10,17 @@
 WITHIN_KERNEL
 ctype C(const ftype re, const ftype im) {
 #if USE_DOUBLE
-  complex_double ans;
-  ans.x = re;
-  ans.y = im;
-  return ans;
-  // return COMPLEX_CTR(double2) (re,im);
+  // complex_double ans;
+  // ans.x = re;
+  // ans.y = im;
+  // return ans;
+  return COMPLEX_CTR(double2) (re,im);
 #else
-  complex_float ans;
-  ans.x = re;
-  ans.y = im;
-  return ans;
-  // return COMPLEX_CTR(float2) (re,im);
+  // complex_float ans;
+  // ans.x = re;
+  // ans.y = im;
+  // return ans;
+  return COMPLEX_CTR(float2) (re,im);
 #endif
 }
 
