@@ -161,6 +161,15 @@ void kernel_argus(GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *in,
 }
 
 KERNEL
+void kernel_landau(GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *in,
+                   const ftype mu, const ftype sigma, const ftype xU) {
+  SIZE_T idx = get_global_id(0);
+  const ftype num = landau((in[idx] - mu) / sigma, 1, 0);
+  const ftype den = sigma;
+  out[idx] = num / den;
+}
+
+KERNEL
 void py_shoulder(GLOBAL_MEM ftype *out, GLOBAL_MEM const ftype *in,
                  const ftype m0, const ftype c, const ftype p) {
   SIZE_T idx = get_global_id(0);

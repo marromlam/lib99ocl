@@ -52,7 +52,7 @@ WITHIN_KERNEL
 ctype cpow(const ctype w, const ctype z);
 
 WITHIN_KERNEL
-ctype csqrt(const ctype w, const ctype z);
+ctype csqrt(const ctype w);
 
 #endif // _COMPLEX_H_
 
