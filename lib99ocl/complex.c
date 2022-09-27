@@ -121,7 +121,7 @@ WITHIN_KERNEL
 ctype cpow(const ctype w, const ctype z) { return cexp(cmul(z, clog(w))); }
 
 WITHIN_KERNEL
-ctype csqrt(const ctype w, const ctype z) { return cexp(cmul(z, clog(w))); }
+ctype csqrt(const ctype w) { return cexp(cmul(C(2.,0), clog(w))); }
 
 // }}}
 
