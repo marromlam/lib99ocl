@@ -265,13 +265,18 @@ ftype shoulder(const ftype x, const ftype mu, const ftype sigma,
 
 WITHIN_KERNEL
 ftype argus(const ftype x, const ftype m0, const ftype c, const ftype p) {
-  if (x >= m0) {
-    return 0.0;
-  }
-  const ftype a = x * rpow(1 - (x / m0) * (x / m0), p);
-  const ftype b = exp(c * (1 - (x / m0) * (x / m0)));
+  // if (x >= m0) {
+  //   return 0.0;
+  // }
+  // const ftype a = x * rpow(1 - (x / m0) * (x / m0), p);
+  // const ftype b = exp(c * (1 - (x / m0) * (x / m0)));
+  const ftype t = x / m0;
+  if (t >= 1)
+    return 0;
 
-  return a * b;
+  const ftype u = 1 - t * t;
+  // cout << "c = " << c << " result = " << m*TMath::Power(u,p)*exp(c*u) << endl
+  return x * rpow(u, p) * exp(c * u);
 }
 
 WITHIN_KERNEL

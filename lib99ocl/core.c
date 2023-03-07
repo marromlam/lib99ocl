@@ -15,57 +15,44 @@
 /*       do { */
 /*         expected.f = current.f; */
 /*         next.f = expected.f + val; */
-/*         current.u = atomic_cmpxchg( (volatile __global long *) addr, expected.u, next.u); */
+/*         current.u = atomic_cmpxchg( (volatile __global long *) addr,
+ * expected.u, next.u); */
 /*       } while( current.u != expected.u ); */
 /*     } */
 /*   #endif */
 /* #endif */
 
-
-
 #ifdef CUDA
-  WITHIN_KERNEL
-  ftype fract(const ftype x)
-  {
-    return x - floorf(x);
-  }
+WITHIN_KERNEL
+ftype fract(const ftype x) { return x - floorf(x); }
 #else
-  WITHIN_KERNEL
-  ftype fract(const ftype x)
-  {
-    return x - floor(x);
-  }
+WITHIN_KERNEL
+ftype fract(const ftype x) { return x - floor(x); }
 #endif
 
-
-
 WITHIN_KERNEL
-ftype rpow(const ftype x, const ftype n)
-{
+ftype rpow(const ftype x, const ftype n) {
+  if (x == 0. && n == 0.)
+    return 1.;
   return pow(x, n);
 }
 
-
+WITHIN_KERNEL
+ftype sqr(const ftype x) { return x * x; }
 
 WITHIN_KERNEL
-ftype sqr(const ftype x)
-{
-  return x*x;
-}
-
-
-WITHIN_KERNEL
-int nearest_int(ftype x)
-{
-   int i;
-   if (x >= 0) {
-      i = (int)(x + 0.5);
-      if ( i & 1 && x + 0.5 == (ftype)i ) i--;
-   } else {
-      i = (int)(x - 0.5);
-      if ( i & 1 && x - 0.5 == (ftype)i ) i++;
-   }
-   return i;
+int nearest_int(ftype x) {
+  int i;
+  if (x >= 0) {
+    i = (int)(x + 0.5);
+    if (i & 1 && x + 0.5 == (ftype)i)
+      i--;
+  } else {
+    i = (int)(x - 0.5);
+    if (i & 1 && x - 0.5 == (ftype)i)
+      i++;
+  }
+  return i;
 }
 
 // WITHIN_KERNEL
@@ -96,10 +83,9 @@ int nearest_int(ftype x)
 //     return (y);
 // }
 
-
-//static float sqrarg;
-//#define SQR(a) ((sqrarg=(a)) == 0.0 ? 0.0 : sqrarg*sqrarg)
-//#define SQUARE(a) ((a)*(a))
+// static float sqrarg;
+// #define SQR(a) ((sqrarg=(a)) == 0.0 ? 0.0 : sqrarg*sqrarg)
+// #define SQUARE(a) ((a)*(a))
 
 /* ftype hypotenuse(const ftype a, const ftype b) */
 /* { */
@@ -114,9 +100,3 @@ int nearest_int(ftype x)
 /*     return absb == 0.0 ? 0.0 : absb * sqrt(1.0 + SQUARE(absa/absb)); */
 /*   } */
 /* } */
-
-
-
-
-
-
